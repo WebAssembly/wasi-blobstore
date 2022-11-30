@@ -153,8 +153,6 @@ interface "wasi:blob/types" {
   record container-metadata {
     // the container's name
     name: container-name,
-    // the number of objects in the container
-    num_objects: u64,
     // date and time container was created
     created-at: timestamp,
   }
