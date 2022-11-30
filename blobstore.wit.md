@@ -23,9 +23,6 @@ interface "wasi:blob/blobstore" {
   // creates a new empty container
   create-container: func(name: container-name) -> result<container,Error>
 
-  // get a list of all containers, as a stream.
-  list-containers: func() -> result<stream<container-name>, Error>
-
   // retrieves a container by name
   get-container: func(name: container-name) -> result<container, Error>
 
@@ -98,9 +95,6 @@ interface "wasi:blob/write-stream" {
 
   // closes the write stream
   close: func() -> result<_,Error>
-
-  // flushes the write stream. If close has been called, returns error.
-  flush: func() -> result<_, Error>
 }
 
 // A read stream for retrieving an object (or object region) from blob store
