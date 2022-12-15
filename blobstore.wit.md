@@ -44,7 +44,7 @@ interface "wasi:blob/blobstore" {
 }
 
 // a Container is a collection of objects
-resource container {
+resource "wasi:blob/container" {
 
   // returns container name
   name: func() -> result<string, Error>
@@ -88,7 +88,7 @@ resource container {
 }
 
 // A write stream for saving an object to a blobstore.
-interface "wasi:blob/write-stream" {
+resource "wasi:blob/write-stream" {
 
   // writes (appends) bytes to the object.
   write: func(data: list<u8>) -> result<_, Error>
@@ -98,7 +98,7 @@ interface "wasi:blob/write-stream" {
 }
 
 // A read stream for retrieving an object (or object region) from blob store
-interface "wasi:blob/read-stream" {
+resource "wasi:blob/read-stream" {
 
   // reads bytes from the object into an existing array,
   // until the buffer is full or the end of the stream.
@@ -115,7 +115,7 @@ interface "wasi:blob/read-stream" {
 // A data-blob resource references a byte array. It is intended to be lightweight
 // and can be passed to other components, without the overhead of copying the underlying bytes.
 // A data-blob can be created with object::get-data(), or with the create() function below.
-resource data-blob {
+resource "wasi:blob/data-blob" {
 
   // creates a new data blob
   create: func() -> data-blob-writer
@@ -129,7 +129,7 @@ resource data-blob {
 
 // A data-blob-writer is a writable stream that creates a transient data-blob.
 // The data-blob can later be saved to an object with container::write-data()
-interface "wasi:blob/data-blob-writer" {
+resource "wasi:blob/data-blob-writer" {
 
   // append bytes to a data-blob
   write: func(data: list<u8>) -> result<_, Error>
