@@ -59,15 +59,60 @@ TODO before entering Phase 2.
 
 #### [Use case 1]
 
-[Provide example code snippets and diagrams explaining how the API would be used to solve the given problem]
+```rust
+// Count the number of lines in an object
+// For simplicity, assume the object contains ascii text and lines end in '\n'
+fn count_lines(store: &impl BlobStore, id: &ObjectId) -> Result<usize, Error> {
+  let mut stream = store.get_container(&id.container_name)?.read_object(&id.object_name)?;
+  let mut buf = [0u8; 4096];
+  let mut num_lines = 0;
+  while let Some(bytes) = stream.read_into(&mut buf)? {
+    num_lines += buf[0..bytes as usize].iter().filter(|&c| *c == b'\n').count();
+  }
+  Ok(num_lines)
+}
+```
 
 #### [Use case 2]
 
-[etc.]
+```rust
+// Download a file from an http url and save it to the blob store.
+// When completed, returns metadata for the new object
+fn download(url: &str, store: &impl BlobStore, id: &ObjectId) -> Result<ObjectMetadata, Error> {
+    let container = store.get_container(&id.container_name)?;
+    // retrieve a url via wasi-http fetch() method
+    // the http service hasn't been defined yet, but assume its fetch() method returns a readable stream.
+    let mut download_stream = http::fetch(url)?;
+    let mut buf = [0u8; 4096];
+    let mut save_stream = container.write_object(&id.object_name)?;
+    while let Some(bytes) = download_stream.read_into(&mut buf)? {
+        save_stream.write(&buf[0..bytes as usize])?;
+    }
+    // ensure stream is flushed and object is created, before we query the metadata
+    save_stream.close()?;
+    let obj = container.object_info(&id.object_name)?;
+    Ok(obj)
+}
+```
+
+#### [Use case 3]
+
+```rust
+// suppose the "logs" container has objects with names that start with a timestamp, like "2022-01-01-12-00-00.log"
+// for every day that activity occurred. To count the number of logs from january 2022, call:
+//    `count_objects_with_prefix(store, "logs", "2022-01")`
+fn count_objects_with_prefix(store: &impl BlobStore, container_name: &str, prefix: &str) -> Result<usize,Error> {
+  let container = store.get_container(container_name)?;
+  let names = container.list_objects()?;
+  let count = names.filter(|n| n.starts_with(prefix)).count();
+  Ok(count)
+}
+```
 
 ### Detailed design discussion
 
-[This section should mostly refer to the .wit.md file that specifies the API. This section is for any discussion of the choices made in the API which don't make sense to document in the spec file itself.]
+see [blobstore.md](./blobstore.wit.md)
+
 
 #### [Tricky design choice #1]
 
