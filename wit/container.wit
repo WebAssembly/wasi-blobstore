@@ -53,7 +53,7 @@ interface container {
 
 
   // returns list of objects in the container. Order is undefined.
-  list-objects: func(container: container, name: object-name) -> result<stream-object-names, Error>
+  list-objects: func(container: container) -> result<stream-object-names, Error>
 
   // deletes object.
   // does not return error if object did not exist.
