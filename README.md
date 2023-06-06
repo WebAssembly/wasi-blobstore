@@ -10,6 +10,8 @@ Phase 1
 
 - Jiaxiao Zhou
 - Kevin Hoffman
+- David Justice
+- Dan Chiarlon
 
 ### Phase 4 Advancement Criteria
 
