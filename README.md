@@ -1,63 +1,65 @@
-# [Example WASI proposal]
-
-This template can be used to start a new proposal, which can then be proposed in the WASI Subgroup meetings.
-
-The sections below are recommended. However, every proposal is different, and the community can help you flesh out the proposal, so don't block on having something filled in for each one of them.
-
-Thank you to the W3C Privacy CG for the [inspiration](https://github.com/privacycg/template)!
-
-# [Title]
+# WASI Blob Store
 
 A proposed [WebAssembly System Interface](https://github.com/WebAssembly/WASI) API.
 
 ### Current Phase
 
-[Fill in the current phase, e.g. Phase 1]
+Phase 1
 
 ### Champions
 
-- [Champion 1]
-- [Champion 2]
-- [etc.]
+- Jiaxiao Zhou
+- Kevin Hoffman
+- David Justice
+- Dan Chiarlon
 
 ### Phase 4 Advancement Criteria
 
-TODO before entering Phase 2.
+* [ ] At least two independent production implementations.
+* [ ] At least two cloud provider implementations.
+* [ ] Implementations available for at least Windows, Linux & MacOS.
+* [ ] A test suite that passes on the platforms and implementations mentioned above.
 
-## Table of Contents [if the explainer is longer than one printed page]
+## Table of Contents
 
 - [Introduction](#introduction)
-- [Goals [or Motivating Use Cases, or Scenarios]](#goals-or-motivating-use-cases-or-scenarios)
+- [Goals](#goals)
 - [Non-goals](#non-goals)
 - [API walk-through](#api-walk-through)
-  - [Use case 1](#use-case-1)
-  - [Use case 2](#use-case-2)
-- [Detailed design discussion](#detailed-design-discussion)
-  - [[Tricky design choice 1]](#tricky-design-choice-1)
-  - [[Tricky design choice 2]](#tricky-design-choice-2)
-- [Considered alternatives](#considered-alternatives)
-  - [[Alternative 1]](#alternative-1)
-  - [[Alternative 2]](#alternative-2)
+  - [Process Blob Contents](#process-blob-contents)
+  - [Write to a Blob Stream](#write-to-a-blob-stream)
+  - [List Objects within a Container](#list-objects-within-a-container)
+- [Detailed Design Discussion](#detailed-design-discussion)
+  - [Handling Large Files](#handling-large-files)  
 - [Stakeholder Interest & Feedback](#stakeholder-interest--feedback)
-- [References & acknowledgements](#references--acknowledgements)
 
 ### Introduction
 
-[The "executive summary" or "abstract". Explain in a few sentences what the goals of the project are, and a brief overview of how the solution works. This should be no more than 1-2 paragraphs.]
+**Blob storage** is a type of data storage used for unstructured data such as images, videos, documents, backups, etc. Blob storage is also commonly referred to as _object storage_. The term **blob** is actually an acronym for **B**inary **L**arge **OB**ject but can be used to refer to all types of unstructured data.
 
-### Goals [or Motivating Use Cases, or Scenarios]
+Within the context of this proposal, blob storage refers to granting WebAssembly components access to a common abstraction of a blob store. Examples of blob storage services include [Azure Blob Storage](https://azure.microsoft.com/en-us/services/storage/blobs/), [AWS S3](https://aws.amazon.com/s3/), or [Google Cloud Storage](https://cloud.google.com/storage), but can be anything that can be represented as unstructured binary data that conforms to the interface, including file systems.
 
-[What is the end-user need which this project aims to address?]
+### Goals
+
+The primary goal of this API is to provide a common abstraction for blob storage services, so that WebAssembly components can be written to work with any implementation, without needing to know the details of the underlying service.
+
+Additionally, components using this API will be unable to tell the difference between a blob storage service and a file system, allowing them to be written to work with either and will not need to configure the store within the component code.
 
 ### Non-goals
+The following is a list of goals explicitly out of scope for this API specification:
 
-[If there are "adjacent" goals which may appear to be in scope but aren't, enumerate them here. This section may be fleshed out as your design progresses and you encounter necessary technical and other trade-offs.]
+* Cover all edge cases and niche scenarios
+* Configuration of service access
+* Secrets management
+* Definition or direct use of networking protocols
+* Monitoring and Observability
 
 ### API walk-through
 
-[Walk through of how someone would use this API.]
+The following sections provide an overview of how this API might be used. Note that while the samples are in Rust, any language targetable by wasm components via code generation should work.
 
-#### [Use case 1]
+#### Process Blob Contents
+This example shows obtaining a reference to the container and the desired object within that container, and then using `read_into` in a loop to access the blob contents.
 
 ```rust
 // Count the number of lines in an object
@@ -73,7 +75,8 @@ fn count_lines(store: &impl BlobStore, id: &ObjectId) -> Result<usize, Error> {
 }
 ```
 
-#### [Use case 2]
+#### Write to a Blob Stream
+The following code sample shows how to obtain a reference to a container and a writable reference to a stream that will be stored in a blob.
 
 ```rust
 // Download a file from an http url and save it to the blob store.
@@ -95,7 +98,8 @@ fn download(url: &str, store: &impl BlobStore, id: &ObjectId) -> Result<ObjectMe
 }
 ```
 
-#### [Use case 3]
+#### List Objects within a Container
+The following code shows how to enumerate the objects within a container.
 
 ```rust
 // suppose the "logs" container has objects with names that start with a timestamp, like "2022-01-01-12-00-00.log"
@@ -109,47 +113,18 @@ fn count_objects_with_prefix(store: &impl BlobStore, container_name: &str, prefi
 }
 ```
 
-### Detailed design discussion
+### Detailed Design Discussion
 
-see [blobstore.md](./blobstore.wit.md)
+See the [wit files](./wit)
 
+#### Handling Large Files
 
-#### [Tricky design choice #1]
+Handling large files may require changes to the API that are not accounted for in this current proposal. If a component attempts to allocate more memory than the host is willing to give it, then the component could be terminated by the host runtime and the processing will fail.
 
-[Talk through the tradeoffs in coming to the specific design point you want to make.]
+Additionally, if a component spends too long processing a file, either processing one large blob or by processing many small blobs in a tight loop, then the component could again be shut off because it consumed too many resources or too much time.
 
-```
-// Illustrated with example code.
-```
-
-[This may be an open question, in which case you should link to any active discussion threads.]
-
-#### [Tricky design choice 2]
-
-[etc.]
-
-### Considered alternatives
-
-[This section is not required if you already covered considered alternatives in the design discussion above.]
-
-#### [Alternative 1]
-
-[Describe an alternative which was considered, and why you decided against it.]
-
-#### [Alternative 2]
-
-[etc.]
+How to handle this and whether the `callback` approach belongs in the blob store API or in a lower level [wasm-io API](https://github.com/WebAssembly/wasi-io/issues/31) is still under discussion.
 
 ### Stakeholder Interest & Feedback
 
 TODO before entering Phase 3.
-
-[This should include a list of implementers who have expressed interest in implementing the proposal]
-
-### References & acknowledgements
-
-Many thanks for valuable feedback and advice from:
-
-- [Person 1]
-- [Person 2]
-- [etc.]
