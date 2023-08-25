@@ -1,3 +1,4 @@
+package wasi:blobstore
 
 // Types used by blobstore
 interface types {
@@ -16,6 +17,8 @@ interface types {
 
   // size of an object, in bytes
   type object-size = u64
+
+  type error = string
 
   // information about a container
   record container-metadata {
