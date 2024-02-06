@@ -12,6 +12,7 @@ Phase 1
 - Kevin Hoffman
 - David Justice
 - Dan Chiarlon
+- Taylor Thomas
 
 ### Phase 4 Advancement Criteria
 
