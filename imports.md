@@ -5,9 +5,9 @@
 <li>interface <a href="#wasi:io_error_0.2.0"><code>wasi:io/error@0.2.0</code></a></li>
 <li>interface <a href="#wasi:io_poll_0.2.0"><code>wasi:io/poll@0.2.0</code></a></li>
 <li>interface <a href="#wasi:io_streams_0.2.0"><code>wasi:io/streams@0.2.0</code></a></li>
-<li>interface <a href="#wasi:blobstore_types_0.1.0"><code>wasi:blobstore/types@0.1.0</code></a></li>
-<li>interface <a href="#wasi:blobstore_container_0.1.0"><code>wasi:blobstore/container@0.1.0</code></a></li>
-<li>interface <a href="#wasi:blobstore_blobstore_0.1.0"><code>wasi:blobstore/blobstore@0.1.0</code></a></li>
+<li>interface <a href="#wasi:blobstore_types_0.2.0_draft"><code>wasi:blobstore/types@0.2.0-draft</code></a></li>
+<li>interface <a href="#wasi:blobstore_container_0.2.0_draft"><code>wasi:blobstore/container@0.2.0-draft</code></a></li>
+<li>interface <a href="#wasi:blobstore_blobstore_0.2.0_draft"><code>wasi:blobstore/blobstore@0.2.0-draft</code></a></li>
 </ul>
 </li>
 </ul>
@@ -421,7 +421,7 @@ is ready for reading, before performing the <code>splice</code>.</p>
 <ul>
 <li><a name="method_output_stream.blocking_splice.0"></a> result&lt;<code>u64</code>, <a href="#stream_error"><a href="#stream_error"><code>stream-error</code></a></a>&gt;</li>
 </ul>
-<h2><a name="wasi:blobstore_types_0.1.0"></a>Import interface wasi:blobstore/types@0.1.0</h2>
+<h2><a name="wasi:blobstore_types_0.2.0_draft"></a>Import interface wasi:blobstore/types@0.2.0-draft</h2>
 <p>Types used by blobstore</p>
 <hr />
 <h3>Types</h3>
@@ -556,7 +556,7 @@ Soon: switch to <code>resource incoming-value { ... }</code></li>
 <ul>
 <li><a name="method_incoming_value.size.0"></a> <code>u64</code></li>
 </ul>
-<h2><a name="wasi:blobstore_container_0.1.0"></a>Import interface wasi:blobstore/container@0.1.0</h2>
+<h2><a name="wasi:blobstore_container_0.2.0_draft"></a>Import interface wasi:blobstore/container@0.2.0-draft</h2>
 <p>a Container is a collection of objects</p>
 <hr />
 <h3>Types</h3>
@@ -726,7 +726,7 @@ does not return error if object did not exist.</p>
 <ul>
 <li><a name="method_stream_object_names.skip_stream_object_names.0"></a> result&lt;(<code>u64</code>, <code>bool</code>), <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
 </ul>
-<h2><a name="wasi:blobstore_blobstore_0.1.0"></a>Import interface wasi:blobstore/blobstore@0.1.0</h2>
+<h2><a name="wasi:blobstore_blobstore_0.2.0_draft"></a>Import interface wasi:blobstore/blobstore@0.2.0-draft</h2>
 <p>wasi-cloud Blobstore service definition</p>
 <hr />
 <h3>Types</h3>
