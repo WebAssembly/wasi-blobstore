@@ -529,23 +529,23 @@ Soon: switch to <code>resource incoming-value { ... }</code></li>
 <ul>
 <li><a name="method_outgoing_value.outgoing_value_write_body.0"></a> result&lt;own&lt;<a href="#output_stream"><a href="#output_stream"><code>output-stream</code></a></a>&gt;&gt;</li>
 </ul>
-<h4><a name="method_incoming_value.incoming_value_consume_sync"></a><code>[method]incoming-value.incoming-value-consume-sync: func</code></h4>
+<h4><a name="static_incoming_value.incoming_value_consume_sync"></a><code>[static]incoming-value.incoming-value-consume-sync: func</code></h4>
 <h5>Params</h5>
 <ul>
-<li><a name="method_incoming_value.incoming_value_consume_sync.self"></a><code>self</code>: borrow&lt;<a href="#incoming_value"><a href="#incoming_value"><code>incoming-value</code></a></a>&gt;</li>
+<li><a name="static_incoming_value.incoming_value_consume_sync.this"></a><code>this</code>: own&lt;<a href="#incoming_value"><a href="#incoming_value"><code>incoming-value</code></a></a>&gt;</li>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_incoming_value.incoming_value_consume_sync.0"></a> result&lt;<a href="#incoming_value_sync_body"><a href="#incoming_value_sync_body"><code>incoming-value-sync-body</code></a></a>, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="static_incoming_value.incoming_value_consume_sync.0"></a> result&lt;<a href="#incoming_value_sync_body"><a href="#incoming_value_sync_body"><code>incoming-value-sync-body</code></a></a>, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
 </ul>
-<h4><a name="method_incoming_value.incoming_value_consume_async"></a><code>[method]incoming-value.incoming-value-consume-async: func</code></h4>
+<h4><a name="static_incoming_value.incoming_value_consume_async"></a><code>[static]incoming-value.incoming-value-consume-async: func</code></h4>
 <h5>Params</h5>
 <ul>
-<li><a name="method_incoming_value.incoming_value_consume_async.self"></a><code>self</code>: borrow&lt;<a href="#incoming_value"><a href="#incoming_value"><code>incoming-value</code></a></a>&gt;</li>
+<li><a name="static_incoming_value.incoming_value_consume_async.this"></a><code>this</code>: own&lt;<a href="#incoming_value"><a href="#incoming_value"><code>incoming-value</code></a></a>&gt;</li>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_incoming_value.incoming_value_consume_async.0"></a> result&lt;own&lt;<a href="#incoming_value_async_body"><a href="#incoming_value_async_body"><code>incoming-value-async-body</code></a></a>&gt;, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="static_incoming_value.incoming_value_consume_async.0"></a> result&lt;own&lt;<a href="#incoming_value_async_body"><a href="#incoming_value_async_body"><code>incoming-value-async-body</code></a></a>&gt;, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
 </ul>
 <h4><a name="method_incoming_value.size"></a><code>[method]incoming-value.size: func</code></h4>
 <h5>Params</h5>
