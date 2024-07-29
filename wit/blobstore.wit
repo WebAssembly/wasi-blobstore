@@ -1,27 +1,86 @@
 // wasi-cloud Blobstore service definition
 interface blobstore {
-  use container.{container};
-  use types.{error, container-name, object-id};
+  use wasi:io/streams@0.2.0.{
+    input-stream,
+    output-stream,
+  };
+
+  use types.{
+    container-metadata,
+    incoming-value,
+    object-metadata,
+    outgoing-value,
+  };
 
   // creates a new empty container
-  create-container: func(name: container-name) -> result<container, error>;
+  create-container: func(name: string) -> result<container, string>;
 
   // retrieves a container by name
-  get-container: func(name: container-name) -> result<container, error>;
+  get-container: func(name: string) -> result<container, string>;
 
   // deletes a container and all objects within it
-  delete-container: func(name: container-name) -> result<_, error>;
+  delete-container: func(name: string) -> result<_, string>;
 
   // returns true if the container exists
-  container-exists: func(name: container-name) -> result<bool, error>;
+  container-exists: func(name: string) -> result<bool, string>;
 
   // copies (duplicates) an object, to the same or a different container.
   // returns an error if the target container does not exist.
   // overwrites destination object if it already existed.
-  copy-object: func(src: object-id, dest: object-id) -> result<_, error>;
+  copy-object: func(src: string, dest: string) -> result<_, string>;
 
   // moves or renames an object, to the same or a different container
   // returns an error if the destination container does not exist.
   // overwrites destination object if it already existed.
-  move-object: func(src:object-id, dest: object-id) -> result<_, error>;
+  move-object: func(src: string, dest: string) -> result<_, string>;
+
+  // this defines the `container` resource
+  resource container {
+    // returns container name
+    name: func() -> result<string, string>;
+
+    // returns container metadata
+    info: func() -> result<container-metadata, string>;
+
+    // retrieves an object or portion of an object, as a resource.
+    // Start and end offsets are inclusive.
+    // Once a data-blob resource has been created, the underlying bytes are held by the blobstore service for the lifetime
+    // of the data-blob resource, even if the object they came from is later deleted.
+    get-data: func(name: string, start: u64, end: u64) -> result<incoming-value, string>;
+
+    // creates or replaces an object with the data blob.
+    write-data: func(name: string, data: borrow<outgoing-value>) -> result<_, string>;
+
+    // returns list of objects in the container. Order is undefined.
+    list-objects: func() -> result<stream-object-names, string>;
+
+    // deletes object.
+    // does not return error if object did not exist.
+    delete-object: func(name: string) -> result<_, string>;
+
+    // deletes multiple objects in the container
+    delete-objects: func(names: list<string>) -> result<_, string>;
+
+    // returns true if the object exists in this container
+    has-object: func(name: string) -> result<bool, string>;
+
+    // returns metadata for the object
+    object-info: func(name: string) -> result<object-metadata, string>;
+
+    // removes all objects within the container, leaving the container empty.
+    clear: func() -> result<_, string>;
+  }
+
+  // this defines the `stream-object-names` resource which is a representation of stream<string>
+  resource stream-object-names {
+    // reads the next number of objects from the stream
+    //
+    // This function returns the list of objects read, and a boolean indicating if the end of the stream was reached.
+    read-stream-object-names: func(len: u64) -> result<tuple<list<string>, bool>, string>;
+
+    // skip the next number of objects in the stream
+    //
+    // This function returns the number of objects skipped, and a boolean indicating if the end of the stream was reached.
+    skip-stream-object-names: func(num: u64) -> result<tuple<u64, bool>, string>;
+  }
 }

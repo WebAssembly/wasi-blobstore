@@ -1,1 +1,2 @@
 io = "https://github.com/WebAssembly/wasi-io/archive/v0.2.0.tar.gz"
+clocks = "https://github.com/WebAssembly/wasi-clocks/archive/v0.2.0.tar.gz"
