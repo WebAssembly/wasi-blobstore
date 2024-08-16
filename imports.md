@@ -521,6 +521,13 @@ Soon: switch to <code>resource incoming-value { ... }</code></li>
 <li><a name="static_outgoing_value.new_outgoing_value.0"></a> own&lt;<a href="#outgoing_value"><a href="#outgoing_value"><code>outgoing-value</code></a></a>&gt;</li>
 </ul>
 <h4><a name="method_outgoing_value.outgoing_value_write_body"></a><code>[method]outgoing-value.outgoing-value-write-body: func</code></h4>
+<p>Returns a stream for writing the value contents.</p>
+<p>The returned <a href="#output_stream"><code>output-stream</code></a> is a child resource: it must be dropped
+before the parent <a href="#outgoing_value"><code>outgoing-value</code></a> resource is dropped (or finished),
+otherwise the <a href="#outgoing_value"><code>outgoing-value</code></a> drop or <code>finish</code> will trap.</p>
+<p>Returns success on the first call: the <a href="#output_stream"><code>output-stream</code></a> resource for
+this <a href="#outgoing_value"><code>outgoing-value</code></a> may be retrieved at most once. Subsequent calls
+will return error.</p>
 <h5>Params</h5>
 <ul>
 <li><a name="method_outgoing_value.outgoing_value_write_body.self"></a><code>self</code>: borrow&lt;<a href="#outgoing_value"><a href="#outgoing_value"><code>outgoing-value</code></a></a>&gt;</li>
@@ -528,6 +535,19 @@ Soon: switch to <code>resource incoming-value { ... }</code></li>
 <h5>Return values</h5>
 <ul>
 <li><a name="method_outgoing_value.outgoing_value_write_body.0"></a> result&lt;own&lt;<a href="#output_stream"><a href="#output_stream"><code>output-stream</code></a></a>&gt;&gt;</li>
+</ul>
+<h4><a name="static_outgoing_value.finish"></a><code>[static]outgoing-value.finish: func</code></h4>
+<p>Finalize an outgoing value. This must be
+called to signal that the outgoing value is complete. If the <a href="#outgoing_value"><code>outgoing-value</code></a>
+is dropped without calling <code>outgoing-value.finalize</code>, the implementation
+should treat the value as corrupted.</p>
+<h5>Params</h5>
+<ul>
+<li><a name="static_outgoing_value.finish.this"></a><code>this</code>: own&lt;<a href="#outgoing_value"><a href="#outgoing_value"><code>outgoing-value</code></a></a>&gt;</li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="static_outgoing_value.finish.0"></a> result&lt;_, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
 </ul>
 <h4><a name="static_incoming_value.incoming_value_consume_sync"></a><code>[static]incoming-value.incoming-value-consume-sync: func</code></h4>
 <h5>Params</h5>
