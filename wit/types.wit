@@ -1,49 +1,32 @@
 // Types used by blobstore
 interface types {
   use wasi:io/streams@0.2.0.{input-stream, output-stream};
-
-  // name of a container, a collection of objects.
-  // The container name may be any valid UTF-8 string.
-  type container-name = string;
-
-  // name of an object within a container
-  // The object name may be any valid UTF-8 string.
-  type object-name = string;
-
-  // TODO: define timestamp to include seconds since
-  // Unix epoch and nanoseconds
-  // https://github.com/WebAssembly/wasi-blob-store/issues/7
-  type timestamp = u64;
-
-  // size of an object, in bytes
-  type object-size = u64;
-
-  type error = string;
+  use wasi:clocks/wall-clock@0.2.0.{datetime};
 
   // information about a container
   record container-metadata {
     // the container's name
-    name: container-name,
+    name: string,
     // date and time container was created
-    created-at: timestamp,
+    created-at: datetime,
   }
 
   // information about an object
   record object-metadata {
     // the object's name
-    name: object-name,
+    name: string,
     // the object's parent container
-    container: container-name,
+    container: string,
     // date and time the object was created
-    created-at: timestamp,
+    created-at: datetime,
     // size of the object, in bytes
-    size: object-size,
+    size: u64,
   }
 
   // identifier for an object that includes its container name
   record object-id {
-    container: container-name,
-    object: object-name
+    container: string,
+    object: string
   }
 
   /// A data is the data stored in a data blob. The value can be of any type
@@ -81,8 +64,8 @@ interface types {
   ///    value as an input-stream.
   // Soon: switch to `resource incoming-value { ... }`
   resource incoming-value {
-      incoming-value-consume-sync: static func(this: incoming-value) -> result<incoming-value-sync-body, error>;
-      incoming-value-consume-async: static func(this: incoming-value) -> result<incoming-value-async-body, error>;
+      incoming-value-consume-sync: static func(this: incoming-value) -> result<incoming-value-sync-body, string>;
+      incoming-value-consume-async: static func(this: incoming-value) -> result<incoming-value-async-body, string>;
       size: func() -> u64;
   }
 

@@ -5,8 +5,8 @@
 <li>interface <a href="#wasi:io_error_0.2.0"><code>wasi:io/error@0.2.0</code></a></li>
 <li>interface <a href="#wasi:io_poll_0.2.0"><code>wasi:io/poll@0.2.0</code></a></li>
 <li>interface <a href="#wasi:io_streams_0.2.0"><code>wasi:io/streams@0.2.0</code></a></li>
+<li>interface <a href="#wasi:clocks_wall_clock_0.2.0"><code>wasi:clocks/wall-clock@0.2.0</code></a></li>
 <li>interface <a href="#wasi:blobstore_types_0.2.0_draft"><code>wasi:blobstore/types@0.2.0-draft</code></a></li>
-<li>interface <a href="#wasi:blobstore_container_0.2.0_draft"><code>wasi:blobstore/container@0.2.0-draft</code></a></li>
 <li>interface <a href="#wasi:blobstore_blobstore_0.2.0_draft"><code>wasi:blobstore/blobstore@0.2.0-draft</code></a></li>
 </ul>
 </li>
@@ -421,6 +421,47 @@ is ready for reading, before performing the <code>splice</code>.</p>
 <ul>
 <li><a name="method_output_stream.blocking_splice.0"></a> result&lt;<code>u64</code>, <a href="#stream_error"><a href="#stream_error"><code>stream-error</code></a></a>&gt;</li>
 </ul>
+<h2><a name="wasi:clocks_wall_clock_0.2.0"></a>Import interface wasi:clocks/wall-clock@0.2.0</h2>
+<p>WASI Wall Clock is a clock API intended to let users query the current
+time. The name &quot;wall&quot; makes an analogy to a &quot;clock on the wall&quot;, which
+is not necessarily monotonic as it may be reset.</p>
+<p>It is intended to be portable at least between Unix-family platforms and
+Windows.</p>
+<p>A wall clock is a clock which measures the date and time according to
+some external reference.</p>
+<p>External references may be reset, so this clock is not necessarily
+monotonic, making it unsuitable for measuring elapsed time.</p>
+<p>It is intended for reporting the current date and time for humans.</p>
+<hr />
+<h3>Types</h3>
+<h4><a name="datetime"></a><code>record datetime</code></h4>
+<p>A time and date in seconds plus nanoseconds.</p>
+<h5>Record Fields</h5>
+<ul>
+<li><a name="datetime.seconds"></a><code>seconds</code>: <code>u64</code></li>
+<li><a name="datetime.nanoseconds"></a><code>nanoseconds</code>: <code>u32</code></li>
+</ul>
+<hr />
+<h3>Functions</h3>
+<h4><a name="now"></a><code>now: func</code></h4>
+<p>Read the current value of the clock.</p>
+<p>This clock is not monotonic, therefore calling this function repeatedly
+will not necessarily produce a sequence of non-decreasing values.</p>
+<p>The returned timestamps represent the number of seconds since
+1970-01-01T00:00:00Z, also known as <a href="https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html#tag_21_04_16">POSIX's Seconds Since the Epoch</a>,
+also known as <a href="https://en.wikipedia.org/wiki/Unix_time">Unix Time</a>.</p>
+<p>The nanoseconds field of the output is always less than 1000000000.</p>
+<h5>Return values</h5>
+<ul>
+<li><a name="now.0"></a> <a href="#datetime"><a href="#datetime"><code>datetime</code></a></a></li>
+</ul>
+<h4><a name="resolution"></a><code>resolution: func</code></h4>
+<p>Query the resolution of the clock.</p>
+<p>The nanoseconds field of the output is always less than 1000000000.</p>
+<h5>Return values</h5>
+<ul>
+<li><a name="resolution.0"></a> <a href="#datetime"><a href="#datetime"><code>datetime</code></a></a></li>
+</ul>
 <h2><a name="wasi:blobstore_types_0.2.0_draft"></a>Import interface wasi:blobstore/types@0.2.0-draft</h2>
 <p>Types used by blobstore</p>
 <hr />
@@ -431,35 +472,19 @@ is ready for reading, before performing the <code>splice</code>.</p>
 #### <a name="output_stream"></a>`type output-stream`
 [`output-stream`](#output_stream)
 <p>
-#### <a name="container_name"></a>`type container-name`
-`string`
-<p>name of a container, a collection of objects.
-The container name may be any valid UTF-8 string.
-<h4><a name="object_name"></a><code>type object-name</code></h4>
-<p><code>string</code></p>
-<p>name of an object within a container
-The object name may be any valid UTF-8 string.
-<h4><a name="timestamp"></a><code>type timestamp</code></h4>
-<p><code>u64</code></p>
-<p>TODO: define timestamp to include seconds since
-Unix epoch and nanoseconds
-https://github.com/WebAssembly/wasi-blob-store/issues/7
-<h4><a name="object_size"></a><code>type object-size</code></h4>
-<p><code>u64</code></p>
-<p>size of an object, in bytes
-<h4><a name="error"></a><code>type error</code></h4>
-<p><code>string</code></p>
+#### <a name="datetime"></a>`type datetime`
+[`datetime`](#datetime)
 <p>
 #### <a name="container_metadata"></a>`record container-metadata`
 <p>information about a container</p>
 <h5>Record Fields</h5>
 <ul>
 <li>
-<p><a name="container_metadata.name"></a><code>name</code>: <a href="#container_name"><a href="#container_name"><code>container-name</code></a></a></p>
+<p><a name="container_metadata.name"></a><code>name</code>: <code>string</code></p>
 <p>the container's name
 </li>
 <li>
-<p><a name="container_metadata.created_at"></a><code>created-at</code>: <a href="#timestamp"><a href="#timestamp"><code>timestamp</code></a></a></p>
+<p><a name="container_metadata.created_at"></a><code>created-at</code>: <a href="#datetime"><a href="#datetime"><code>datetime</code></a></a></p>
 <p>date and time container was created
 </li>
 </ul>
@@ -468,19 +493,19 @@ https://github.com/WebAssembly/wasi-blob-store/issues/7
 <h5>Record Fields</h5>
 <ul>
 <li>
-<p><a name="object_metadata.name"></a><code>name</code>: <a href="#object_name"><a href="#object_name"><code>object-name</code></a></a></p>
+<p><a name="object_metadata.name"></a><code>name</code>: <code>string</code></p>
 <p>the object's name
 </li>
 <li>
-<p><a name="object_metadata.container"></a><a href="#container"><code>container</code></a>: <a href="#container_name"><a href="#container_name"><code>container-name</code></a></a></p>
+<p><a name="object_metadata.container"></a><a href="#container"><code>container</code></a>: <code>string</code></p>
 <p>the object's parent container
 </li>
 <li>
-<p><a name="object_metadata.created_at"></a><code>created-at</code>: <a href="#timestamp"><a href="#timestamp"><code>timestamp</code></a></a></p>
+<p><a name="object_metadata.created_at"></a><code>created-at</code>: <a href="#datetime"><a href="#datetime"><code>datetime</code></a></a></p>
 <p>date and time the object was created
 </li>
 <li>
-<p><a name="object_metadata.size"></a><code>size</code>: <a href="#object_size"><a href="#object_size"><code>object-size</code></a></a></p>
+<p><a name="object_metadata.size"></a><code>size</code>: <code>u64</code></p>
 <p>size of the object, in bytes
 </li>
 </ul>
@@ -488,8 +513,8 @@ https://github.com/WebAssembly/wasi-blob-store/issues/7
 <p>identifier for an object that includes its container name</p>
 <h5>Record Fields</h5>
 <ul>
-<li><a name="object_id.container"></a><a href="#container"><code>container</code></a>: <a href="#container_name"><a href="#container_name"><code>container-name</code></a></a></li>
-<li><a name="object_id.object"></a><code>object</code>: <a href="#object_name"><a href="#object_name"><code>object-name</code></a></a></li>
+<li><a name="object_id.container"></a><a href="#container"><code>container</code></a>: <code>string</code></li>
+<li><a name="object_id.object"></a><code>object</code>: <code>string</code></li>
 </ul>
 <h4><a name="outgoing_value"></a><code>resource outgoing-value</code></h4>
 <p>A data is the data stored in a data blob. The value can be of any type
@@ -556,7 +581,7 @@ should treat the value as corrupted.</p>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="static_incoming_value.incoming_value_consume_sync.0"></a> result&lt;<a href="#incoming_value_sync_body"><a href="#incoming_value_sync_body"><code>incoming-value-sync-body</code></a></a>, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="static_incoming_value.incoming_value_consume_sync.0"></a> result&lt;<a href="#incoming_value_sync_body"><a href="#incoming_value_sync_body"><code>incoming-value-sync-body</code></a></a>, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="static_incoming_value.incoming_value_consume_async"></a><code>[static]incoming-value.incoming-value-consume-async: func</code></h4>
 <h5>Params</h5>
@@ -565,7 +590,7 @@ should treat the value as corrupted.</p>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="static_incoming_value.incoming_value_consume_async.0"></a> result&lt;own&lt;<a href="#incoming_value_async_body"><a href="#incoming_value_async_body"><code>incoming-value-async-body</code></a></a>&gt;, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="static_incoming_value.incoming_value_consume_async.0"></a> result&lt;own&lt;<a href="#incoming_value_async_body"><a href="#incoming_value_async_body"><code>incoming-value-async-body</code></a></a>&gt;, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_incoming_value.size"></a><code>[method]incoming-value.size: func</code></h4>
 <h5>Params</h5>
@@ -576,8 +601,8 @@ should treat the value as corrupted.</p>
 <ul>
 <li><a name="method_incoming_value.size.0"></a> <code>u64</code></li>
 </ul>
-<h2><a name="wasi:blobstore_container_0.2.0_draft"></a>Import interface wasi:blobstore/container@0.2.0-draft</h2>
-<p>a Container is a collection of objects</p>
+<h2><a name="wasi:blobstore_blobstore_0.2.0_draft"></a>Import interface wasi:blobstore/blobstore@0.2.0-draft</h2>
+<p>wasi-cloud Blobstore service definition</p>
 <hr />
 <h3>Types</h3>
 <h4><a name="input_stream"></a><code>type input-stream</code></h4>
@@ -589,17 +614,11 @@ should treat the value as corrupted.</p>
 #### <a name="container_metadata"></a>`type container-metadata`
 [`container-metadata`](#container_metadata)
 <p>
-#### <a name="error"></a>`type error`
-[`error`](#error)
-<p>
 #### <a name="incoming_value"></a>`type incoming-value`
 [`incoming-value`](#incoming_value)
 <p>
 #### <a name="object_metadata"></a>`type object-metadata`
 [`object-metadata`](#object_metadata)
-<p>
-#### <a name="object_name"></a>`type object-name`
-[`object-name`](#object_name)
 <p>
 #### <a name="outgoing_value"></a>`type outgoing-value`
 [`outgoing-value`](#outgoing_value)
@@ -607,8 +626,74 @@ should treat the value as corrupted.</p>
 #### <a name="container"></a>`resource container`
 <p>this defines the <a href="#container"><code>container</code></a> resource</p>
 <h4><a name="stream_object_names"></a><code>resource stream-object-names</code></h4>
-<h2>this defines the <a href="#stream_object_names"><code>stream-object-names</code></a> resource which is a representation of stream<object-name></h2>
+<h2>this defines the <a href="#stream_object_names"><code>stream-object-names</code></a> resource which is a representation of stream<string></h2>
 <h3>Functions</h3>
+<h4><a name="create_container"></a><code>create-container: func</code></h4>
+<p>creates a new empty container</p>
+<h5>Params</h5>
+<ul>
+<li><a name="create_container.name"></a><code>name</code>: <code>string</code></li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="create_container.0"></a> result&lt;own&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;, <code>string</code>&gt;</li>
+</ul>
+<h4><a name="get_container"></a><code>get-container: func</code></h4>
+<p>retrieves a container by name</p>
+<h5>Params</h5>
+<ul>
+<li><a name="get_container.name"></a><code>name</code>: <code>string</code></li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="get_container.0"></a> result&lt;own&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;, <code>string</code>&gt;</li>
+</ul>
+<h4><a name="delete_container"></a><code>delete-container: func</code></h4>
+<p>deletes a container and all objects within it</p>
+<h5>Params</h5>
+<ul>
+<li><a name="delete_container.name"></a><code>name</code>: <code>string</code></li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="delete_container.0"></a> result&lt;_, <code>string</code>&gt;</li>
+</ul>
+<h4><a name="container_exists"></a><code>container-exists: func</code></h4>
+<p>returns true if the container exists</p>
+<h5>Params</h5>
+<ul>
+<li><a name="container_exists.name"></a><code>name</code>: <code>string</code></li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="container_exists.0"></a> result&lt;<code>bool</code>, <code>string</code>&gt;</li>
+</ul>
+<h4><a name="copy_object"></a><code>copy-object: func</code></h4>
+<p>copies (duplicates) an object, to the same or a different container.
+returns an error if the target container does not exist.
+overwrites destination object if it already existed.</p>
+<h5>Params</h5>
+<ul>
+<li><a name="copy_object.src"></a><code>src</code>: <code>string</code></li>
+<li><a name="copy_object.dest"></a><code>dest</code>: <code>string</code></li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="copy_object.0"></a> result&lt;_, <code>string</code>&gt;</li>
+</ul>
+<h4><a name="move_object"></a><code>move-object: func</code></h4>
+<p>moves or renames an object, to the same or a different container
+returns an error if the destination container does not exist.
+overwrites destination object if it already existed.</p>
+<h5>Params</h5>
+<ul>
+<li><a name="move_object.src"></a><code>src</code>: <code>string</code></li>
+<li><a name="move_object.dest"></a><code>dest</code>: <code>string</code></li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="move_object.0"></a> result&lt;_, <code>string</code>&gt;</li>
+</ul>
 <h4><a name="method_container.name"></a><code>[method]container.name: func</code></h4>
 <p>returns container name</p>
 <h5>Params</h5>
@@ -617,7 +702,7 @@ should treat the value as corrupted.</p>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.name.0"></a> result&lt;<code>string</code>, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.name.0"></a> result&lt;<code>string</code>, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_container.info"></a><code>[method]container.info: func</code></h4>
 <p>returns container metadata</p>
@@ -627,7 +712,7 @@ should treat the value as corrupted.</p>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.info.0"></a> result&lt;<a href="#container_metadata"><a href="#container_metadata"><code>container-metadata</code></a></a>, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.info.0"></a> result&lt;<a href="#container_metadata"><a href="#container_metadata"><code>container-metadata</code></a></a>, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_container.get_data"></a><code>[method]container.get-data: func</code></h4>
 <p>retrieves an object or portion of an object, as a resource.
@@ -637,25 +722,25 @@ of the data-blob resource, even if the object they came from is later deleted.</
 <h5>Params</h5>
 <ul>
 <li><a name="method_container.get_data.self"></a><code>self</code>: borrow&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;</li>
-<li><a name="method_container.get_data.name"></a><code>name</code>: <a href="#object_name"><a href="#object_name"><code>object-name</code></a></a></li>
+<li><a name="method_container.get_data.name"></a><code>name</code>: <code>string</code></li>
 <li><a name="method_container.get_data.start"></a><code>start</code>: <code>u64</code></li>
 <li><a name="method_container.get_data.end"></a><code>end</code>: <code>u64</code></li>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.get_data.0"></a> result&lt;own&lt;<a href="#incoming_value"><a href="#incoming_value"><code>incoming-value</code></a></a>&gt;, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.get_data.0"></a> result&lt;own&lt;<a href="#incoming_value"><a href="#incoming_value"><code>incoming-value</code></a></a>&gt;, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_container.write_data"></a><code>[method]container.write-data: func</code></h4>
 <p>creates or replaces an object with the data blob.</p>
 <h5>Params</h5>
 <ul>
 <li><a name="method_container.write_data.self"></a><code>self</code>: borrow&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;</li>
-<li><a name="method_container.write_data.name"></a><code>name</code>: <a href="#object_name"><a href="#object_name"><code>object-name</code></a></a></li>
+<li><a name="method_container.write_data.name"></a><code>name</code>: <code>string</code></li>
 <li><a name="method_container.write_data.data"></a><code>data</code>: borrow&lt;<a href="#outgoing_value"><a href="#outgoing_value"><code>outgoing-value</code></a></a>&gt;</li>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.write_data.0"></a> result&lt;_, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.write_data.0"></a> result&lt;_, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_container.list_objects"></a><code>[method]container.list-objects: func</code></h4>
 <p>returns list of objects in the container. Order is undefined.</p>
@@ -665,7 +750,7 @@ of the data-blob resource, even if the object they came from is later deleted.</
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.list_objects.0"></a> result&lt;own&lt;<a href="#stream_object_names"><a href="#stream_object_names"><code>stream-object-names</code></a></a>&gt;, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.list_objects.0"></a> result&lt;own&lt;<a href="#stream_object_names"><a href="#stream_object_names"><code>stream-object-names</code></a></a>&gt;, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_container.delete_object"></a><code>[method]container.delete-object: func</code></h4>
 <p>deletes object.
@@ -673,44 +758,44 @@ does not return error if object did not exist.</p>
 <h5>Params</h5>
 <ul>
 <li><a name="method_container.delete_object.self"></a><code>self</code>: borrow&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;</li>
-<li><a name="method_container.delete_object.name"></a><code>name</code>: <a href="#object_name"><a href="#object_name"><code>object-name</code></a></a></li>
+<li><a name="method_container.delete_object.name"></a><code>name</code>: <code>string</code></li>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.delete_object.0"></a> result&lt;_, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.delete_object.0"></a> result&lt;_, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_container.delete_objects"></a><code>[method]container.delete-objects: func</code></h4>
 <p>deletes multiple objects in the container</p>
 <h5>Params</h5>
 <ul>
 <li><a name="method_container.delete_objects.self"></a><code>self</code>: borrow&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;</li>
-<li><a name="method_container.delete_objects.names"></a><code>names</code>: list&lt;<a href="#object_name"><a href="#object_name"><code>object-name</code></a></a>&gt;</li>
+<li><a name="method_container.delete_objects.names"></a><code>names</code>: list&lt;<code>string</code>&gt;</li>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.delete_objects.0"></a> result&lt;_, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.delete_objects.0"></a> result&lt;_, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_container.has_object"></a><code>[method]container.has-object: func</code></h4>
 <p>returns true if the object exists in this container</p>
 <h5>Params</h5>
 <ul>
 <li><a name="method_container.has_object.self"></a><code>self</code>: borrow&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;</li>
-<li><a name="method_container.has_object.name"></a><code>name</code>: <a href="#object_name"><a href="#object_name"><code>object-name</code></a></a></li>
+<li><a name="method_container.has_object.name"></a><code>name</code>: <code>string</code></li>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.has_object.0"></a> result&lt;<code>bool</code>, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.has_object.0"></a> result&lt;<code>bool</code>, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_container.object_info"></a><code>[method]container.object-info: func</code></h4>
 <p>returns metadata for the object</p>
 <h5>Params</h5>
 <ul>
 <li><a name="method_container.object_info.self"></a><code>self</code>: borrow&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;</li>
-<li><a name="method_container.object_info.name"></a><code>name</code>: <a href="#object_name"><a href="#object_name"><code>object-name</code></a></a></li>
+<li><a name="method_container.object_info.name"></a><code>name</code>: <code>string</code></li>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.object_info.0"></a> result&lt;<a href="#object_metadata"><a href="#object_metadata"><code>object-metadata</code></a></a>, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.object_info.0"></a> result&lt;<a href="#object_metadata"><a href="#object_metadata"><code>object-metadata</code></a></a>, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_container.clear"></a><code>[method]container.clear: func</code></h4>
 <p>removes all objects within the container, leaving the container empty.</p>
@@ -720,7 +805,7 @@ does not return error if object did not exist.</p>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_container.clear.0"></a> result&lt;_, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_container.clear.0"></a> result&lt;_, <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_stream_object_names.read_stream_object_names"></a><code>[method]stream-object-names.read-stream-object-names: func</code></h4>
 <p>reads the next number of objects from the stream</p>
@@ -732,7 +817,7 @@ does not return error if object did not exist.</p>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_stream_object_names.read_stream_object_names.0"></a> result&lt;(list&lt;<a href="#object_name"><a href="#object_name"><code>object-name</code></a></a>&gt;, <code>bool</code>), <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_stream_object_names.read_stream_object_names.0"></a> result&lt;(list&lt;<code>string</code>&gt;, <code>bool</code>), <code>string</code>&gt;</li>
 </ul>
 <h4><a name="method_stream_object_names.skip_stream_object_names"></a><code>[method]stream-object-names.skip-stream-object-names: func</code></h4>
 <p>skip the next number of objects in the stream</p>
@@ -744,89 +829,5 @@ does not return error if object did not exist.</p>
 </ul>
 <h5>Return values</h5>
 <ul>
-<li><a name="method_stream_object_names.skip_stream_object_names.0"></a> result&lt;(<code>u64</code>, <code>bool</code>), <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
-</ul>
-<h2><a name="wasi:blobstore_blobstore_0.2.0_draft"></a>Import interface wasi:blobstore/blobstore@0.2.0-draft</h2>
-<p>wasi-cloud Blobstore service definition</p>
-<hr />
-<h3>Types</h3>
-<h4><a name="container"></a><code>type container</code></h4>
-<p><a href="#container"><a href="#container"><code>container</code></a></a></p>
-<p>
-#### <a name="error"></a>`type error`
-[`error`](#error)
-<p>
-#### <a name="container_name"></a>`type container-name`
-[`container-name`](#container_name)
-<p>
-#### <a name="object_id"></a>`type object-id`
-[`object-id`](#object_id)
-<p>
-----
-<h3>Functions</h3>
-<h4><a name="create_container"></a><code>create-container: func</code></h4>
-<p>creates a new empty container</p>
-<h5>Params</h5>
-<ul>
-<li><a name="create_container.name"></a><code>name</code>: <a href="#container_name"><a href="#container_name"><code>container-name</code></a></a></li>
-</ul>
-<h5>Return values</h5>
-<ul>
-<li><a name="create_container.0"></a> result&lt;own&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
-</ul>
-<h4><a name="get_container"></a><code>get-container: func</code></h4>
-<p>retrieves a container by name</p>
-<h5>Params</h5>
-<ul>
-<li><a name="get_container.name"></a><code>name</code>: <a href="#container_name"><a href="#container_name"><code>container-name</code></a></a></li>
-</ul>
-<h5>Return values</h5>
-<ul>
-<li><a name="get_container.0"></a> result&lt;own&lt;<a href="#container"><a href="#container"><code>container</code></a></a>&gt;, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
-</ul>
-<h4><a name="delete_container"></a><code>delete-container: func</code></h4>
-<p>deletes a container and all objects within it</p>
-<h5>Params</h5>
-<ul>
-<li><a name="delete_container.name"></a><code>name</code>: <a href="#container_name"><a href="#container_name"><code>container-name</code></a></a></li>
-</ul>
-<h5>Return values</h5>
-<ul>
-<li><a name="delete_container.0"></a> result&lt;_, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
-</ul>
-<h4><a name="container_exists"></a><code>container-exists: func</code></h4>
-<p>returns true if the container exists</p>
-<h5>Params</h5>
-<ul>
-<li><a name="container_exists.name"></a><code>name</code>: <a href="#container_name"><a href="#container_name"><code>container-name</code></a></a></li>
-</ul>
-<h5>Return values</h5>
-<ul>
-<li><a name="container_exists.0"></a> result&lt;<code>bool</code>, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
-</ul>
-<h4><a name="copy_object"></a><code>copy-object: func</code></h4>
-<p>copies (duplicates) an object, to the same or a different container.
-returns an error if the target container does not exist.
-overwrites destination object if it already existed.</p>
-<h5>Params</h5>
-<ul>
-<li><a name="copy_object.src"></a><code>src</code>: <a href="#object_id"><a href="#object_id"><code>object-id</code></a></a></li>
-<li><a name="copy_object.dest"></a><code>dest</code>: <a href="#object_id"><a href="#object_id"><code>object-id</code></a></a></li>
-</ul>
-<h5>Return values</h5>
-<ul>
-<li><a name="copy_object.0"></a> result&lt;_, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
-</ul>
-<h4><a name="move_object"></a><code>move-object: func</code></h4>
-<p>moves or renames an object, to the same or a different container
-returns an error if the destination container does not exist.
-overwrites destination object if it already existed.</p>
-<h5>Params</h5>
-<ul>
-<li><a name="move_object.src"></a><code>src</code>: <a href="#object_id"><a href="#object_id"><code>object-id</code></a></a></li>
-<li><a name="move_object.dest"></a><code>dest</code>: <a href="#object_id"><a href="#object_id"><code>object-id</code></a></a></li>
-</ul>
-<h5>Return values</h5>
-<ul>
-<li><a name="move_object.0"></a> result&lt;_, <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
+<li><a name="method_stream_object_names.skip_stream_object_names.0"></a> result&lt;(<code>u64</code>, <code>bool</code>), <code>string</code>&gt;</li>
 </ul>

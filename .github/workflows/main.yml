@@ -13,4 +13,4 @@ jobs:
     - uses: actions/checkout@v2
     - uses: WebAssembly/wit-abi-up-to-date@v17
       with:
-        wit-bindgen: '0.18.0'
+        wit-bindgen: '0.22.0'
