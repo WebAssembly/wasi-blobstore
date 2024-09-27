@@ -1,13 +1,20 @@
 <h1><a id="imports"></a>World imports</h1>
+<p>The <code>wasi:keyvalue/imports</code> world provides the <code>wasi:blob/store</code> interface
+to interact with blob storage services. With this interface, you can
+do</p>
+<ol>
+<li>container management (create, get, delete, exists)</li>
+<li>object management</li>
+<li>object data streaming</li>
+</ol>
 <ul>
 <li>Imports:
 <ul>
 <li>interface <a href="#wasi_io_error_0_2_1"><code>wasi:io/error@0.2.1</code></a></li>
 <li>interface <a href="#wasi_io_poll_0_2_1"><code>wasi:io/poll@0.2.1</code></a></li>
 <li>interface <a href="#wasi_io_streams_0_2_1"><code>wasi:io/streams@0.2.1</code></a></li>
-<li>interface <a href="#wasi_blobstore_types_0_2_0_draft"><code>wasi:blobstore/types@0.2.0-draft</code></a></li>
-<li>interface <a href="#wasi_blobstore_container_0_2_0_draft"><code>wasi:blobstore/container@0.2.0-draft</code></a></li>
-<li>interface <a href="#wasi_blobstore_blobstore_0_2_0_draft"><code>wasi:blobstore/blobstore@0.2.0-draft</code></a></li>
+<li>interface <a href="#wasi_blob_types_0_2_0_draft"><code>wasi:blob/types@0.2.0-draft</code></a></li>
+<li>interface <a href="#wasi_blob_store_0_2_0_draft"><code>wasi:blob/store@0.2.0-draft</code></a></li>
 </ul>
 </li>
 </ul>
@@ -425,7 +432,7 @@ is ready for reading, before performing the <code>splice</code>.</p>
 <ul>
 <li><a id="method_output_stream_blocking_splice.0"></a> result&lt;<code>u64</code>, <a href="#stream_error"><a href="#stream_error"><code>stream-error</code></a></a>&gt;</li>
 </ul>
-<h2><a id="wasi_blobstore_types_0_2_0_draft"></a>Import interface wasi:blobstore/types@0.2.0-draft</h2>
+<h2><a id="wasi_blob_types_0_2_0_draft"></a>Import interface wasi:blob/types@0.2.0-draft</h2>
 <p>Types used by blobstore</p>
 <hr />
 <h3>Types</h3>
@@ -580,8 +587,7 @@ should treat the value as corrupted.</p>
 <ul>
 <li><a id="method_incoming_value_size.0"></a> <code>u64</code></li>
 </ul>
-<h2><a id="wasi_blobstore_container_0_2_0_draft"></a>Import interface wasi:blobstore/container@0.2.0-draft</h2>
-<p>a Container is a collection of objects</p>
+<h2><a id="wasi_blob_store_0_2_0_draft"></a>Import interface wasi:blob/store@0.2.0-draft</h2>
 <hr />
 <h3>Types</h3>
 <h4><a id="input_stream"></a><code>type input-stream</code></h4>
@@ -589,6 +595,9 @@ should treat the value as corrupted.</p>
 <p>
 #### <a id="output_stream"></a>`type output-stream`
 [`output-stream`](#output_stream)
+<p>
+#### <a id="container_name"></a>`type container-name`
+[`container-name`](#container_name)
 <p>
 #### <a id="container_metadata"></a>`type container-metadata`
 [`container-metadata`](#container_metadata)
@@ -604,6 +613,9 @@ should treat the value as corrupted.</p>
 <p>
 #### <a id="object_name"></a>`type object-name`
 [`object-name`](#object_name)
+<p>
+#### <a id="object_id"></a>`type object-id`
+[`object-id`](#object_id)
 <p>
 #### <a id="outgoing_value"></a>`type outgoing-value`
 [`outgoing-value`](#outgoing_value)
@@ -750,24 +762,6 @@ does not return error if object did not exist.</p>
 <ul>
 <li><a id="method_stream_object_names_skip_stream_object_names.0"></a> result&lt;(<code>u64</code>, <code>bool</code>), <a href="#error"><a href="#error"><code>error</code></a></a>&gt;</li>
 </ul>
-<h2><a id="wasi_blobstore_blobstore_0_2_0_draft"></a>Import interface wasi:blobstore/blobstore@0.2.0-draft</h2>
-<p>wasi-cloud Blobstore service definition</p>
-<hr />
-<h3>Types</h3>
-<h4><a id="container"></a><code>type container</code></h4>
-<p><a href="#container"><a href="#container"><code>container</code></a></a></p>
-<p>
-#### <a id="error"></a>`type error`
-[`error`](#error)
-<p>
-#### <a id="container_name"></a>`type container-name`
-[`container-name`](#container_name)
-<p>
-#### <a id="object_id"></a>`type object-id`
-[`object-id`](#object_id)
-<p>
-----
-<h3>Functions</h3>
 <h4><a id="create_container"></a><code>create-container: func</code></h4>
 <p>creates a new empty container</p>
 <h5>Params</h5>
