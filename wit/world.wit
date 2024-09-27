@@ -1,5 +1,13 @@
 package wasi:blob@0.2.0-draft;
 
+
+/// The `wasi:keyvalue/imports` world provides the `wasi:blob/store` interface
+/// to interact with blob storage services. With this interface, you can
+/// do 
+/// 1. container management (create, get, delete, exists)
+/// 2. object management
+/// 3. object data streaming
 world imports {
+	/// The interface for wasi:blob/store
 	import store;
 }

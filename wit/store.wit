@@ -1,4 +1,3 @@
-// wasi-cloud Blobstore service definition
 interface store {
   use wasi:io/streams@0.2.1.{
     input-stream,
