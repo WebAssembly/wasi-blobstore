@@ -13,8 +13,8 @@ do</p>
 <li>interface <a href="#wasi_io_error_0_2_1"><code>wasi:io/error@0.2.1</code></a></li>
 <li>interface <a href="#wasi_io_poll_0_2_1"><code>wasi:io/poll@0.2.1</code></a></li>
 <li>interface <a href="#wasi_io_streams_0_2_1"><code>wasi:io/streams@0.2.1</code></a></li>
-<li>interface <a href="#wasi_blob_types_0_2_0_draft"><code>wasi:blob/types@0.2.0-draft</code></a></li>
-<li>interface <a href="#wasi_blob_store_0_2_0_draft"><code>wasi:blob/store@0.2.0-draft</code></a></li>
+<li>interface <a href="#wasi_blob_types_0_2_0_draft2"><code>wasi:blob/types@0.2.0-draft2</code></a></li>
+<li>interface <a href="#wasi_blob_store_0_2_0_draft2"><code>wasi:blob/store@0.2.0-draft2</code></a></li>
 </ul>
 </li>
 </ul>
@@ -432,7 +432,7 @@ is ready for reading, before performing the <code>splice</code>.</p>
 <ul>
 <li><a id="method_output_stream_blocking_splice.0"></a> result&lt;<code>u64</code>, <a href="#stream_error"><a href="#stream_error"><code>stream-error</code></a></a>&gt;</li>
 </ul>
-<h2><a id="wasi_blob_types_0_2_0_draft"></a>Import interface wasi:blob/types@0.2.0-draft</h2>
+<h2><a id="wasi_blob_types_0_2_0_draft2"></a>Import interface wasi:blob/types@0.2.0-draft2</h2>
 <p>Types used by blobstore</p>
 <hr />
 <h3>Types</h3>
@@ -587,7 +587,7 @@ should treat the value as corrupted.</p>
 <ul>
 <li><a id="method_incoming_value_size.0"></a> <code>u64</code></li>
 </ul>
-<h2><a id="wasi_blob_store_0_2_0_draft"></a>Import interface wasi:blob/store@0.2.0-draft</h2>
+<h2><a id="wasi_blob_store_0_2_0_draft2"></a>Import interface wasi:blob/store@0.2.0-draft2</h2>
 <hr />
 <h3>Types</h3>
 <h4><a id="input_stream"></a><code>type input-stream</code></h4>

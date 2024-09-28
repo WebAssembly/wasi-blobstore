@@ -1,4 +1,4 @@
-package wasi:blob@0.2.0-draft;
+package wasi:blob@0.2.0-draft2;
 
 
 /// The `wasi:keyvalue/imports` world provides the `wasi:blob/store` interface
